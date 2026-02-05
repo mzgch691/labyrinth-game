@@ -22,7 +22,10 @@ let ws: WebSocket | null = null;
 
 export function initConnection() {
   if (!ws) {
-    ws = new WebSocket("ws://localhost:8080");
+    const storedWsUrl = localStorage.getItem("WS_URL");
+    const globalWsUrl = (window as any).__WS_URL__ as string | undefined;
+    const wsUrl = storedWsUrl || globalWsUrl || "ws://localhost:8080";
+    ws = new WebSocket(wsUrl);
   }
 
 
