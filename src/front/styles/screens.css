@@ -1,0 +1,142 @@
+/* Screen-specific styles */
+
+/* Buttons Panel */
+.button-panel {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.button-panel button {
+  margin-right: 0;
+}
+
+/* List Container */
+.list-container {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Maze Section */
+.maze-section {
+  margin-bottom: 20px;
+  border: 2px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.maze-section h2 {
+  margin-top: 0;
+}
+
+/* Table Container */
+.table-container {
+  margin-top: 20px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.table-container table {
+  margin: 0;
+}
+
+/* Control Panel */
+.control-panel {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.control-panel label {
+  margin-right: 10px;
+  font-weight: 500;
+}
+
+.control-panel > div {
+  margin-top: 10px;
+}
+
+.wall-count-label {
+  font-size: 14px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.hint-label {
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
+/* Grid Container */
+.grid-container {
+  display: inline-block;
+  border: 2px solid #000;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.grid-row {
+  display: flex;
+}
+
+.grid-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.grid-cell-normal {
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+
+.grid-cell-wall {
+  background-color: #ddd;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.grid-cell-wall:hover {
+  background-color: #bbb;
+}
+
+.grid-intersection {
+  background-color: #999;
+}
+
+.grid-coord-label {
+  font-size: 10px;
+  color: #999;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+}
+
+.maze-marker {
+  font-size: 48px;
+  font-weight: bold;
+  cursor: grab;
+}
+
+.maze-marker:active {
+  cursor: grabbing;
+}
+
+/* Empty Message */
+.empty-message {
+  color: #999;
+  font-style: italic;
+  padding: 20px;
+  text-align: center;
+}

@@ -1,0 +1,15 @@
+{
+  "name": "node",
+  "image": "node",
+  "runArgs": ["--name", "node"],
+  "customizations": {
+    "vscode": {
+    "extensions": [
+      "oderwat.indent-rainbow",
+      "formulahendry.code-runner",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode"
+    ]
+    }
+  }
+}

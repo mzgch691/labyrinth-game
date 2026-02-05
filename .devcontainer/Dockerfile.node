@@ -1,0 +1,25 @@
+# image
+FROM ubuntu:22.04
+
+# install tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# install Node.js (LTS) via NodeSource
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# upgrade npm
+RUN npm install -g npm
+
+# install global node packages (example)
+RUN npm install -g \
+    npm-check-updates \
+    jest
+
+# make a workspace directory
+WORKDIR /workdir
