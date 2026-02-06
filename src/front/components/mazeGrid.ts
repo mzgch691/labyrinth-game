@@ -12,6 +12,8 @@ export interface RenderMazeDisplayOptions {
   isOwnMaze?: boolean;
   showAnswer?: boolean;
   answerMaze?: Maze | null;
+  movableCells?: Array<{x: number, y: number}>;
+  onCellClick?: (x: number, y: number) => void;
 }
 
 // Render maze with optional wall marks and position markers
@@ -29,6 +31,8 @@ export function renderMazeDisplay(
     isOwnMaze = false,
     showAnswer = false,
     answerMaze = null,
+    movableCells = [],
+    onCellClick,
   } = options;
 
   const MAZE_SIZE = maze.width;
@@ -60,7 +64,21 @@ export function renderMazeDisplay(
         // Cell
         const cellX = Math.floor(gridX / 2);
         const cellY = Math.floor(gridY / 2);
-        element.style.backgroundColor = "#fff";
+        
+        // Check if this cell is movable
+        const isMovable = movableCells.some(cell => cell.x === cellX && cell.y === cellY);
+        
+        if (isMovable) {
+          element.style.backgroundColor = "#ffcccc"; // Light red for movable cells
+          element.style.cursor = "pointer";
+          element.onclick = () => {
+            if (onCellClick) {
+              onCellClick(cellX, cellY);
+            }
+          };
+        } else {
+          element.style.backgroundColor = "#fff";
+        }
 
         // Coordinate label
         const coordLabel = document.createElement("div");

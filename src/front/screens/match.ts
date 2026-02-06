@@ -80,67 +80,46 @@ export function renderMatch(root: HTMLElement) {
 
     root.appendChild(statusPanel);
 
-    // Control buttons
-    const controlPanel = document.createElement("div");
-    controlPanel.style.marginBottom = "20px";
-
-    const upBtn = document.createElement("button");
-    const downBtn = document.createElement("button");
-    const leftBtn = document.createElement("button");
-    const rightBtn = document.createElement("button");
-
-    upBtn.textContent = "↑";
-    downBtn.textContent = "↓";
-    leftBtn.textContent = "←";
-    rightBtn.textContent = "→";
-
-    const buttons = [upBtn, downBtn, leftBtn, rightBtn];
-    buttons.forEach((btn) => {
-      btn.style.marginRight = "8px";
-      btn.style.width = "40px";
-      btn.style.height = "40px";
-      btn.style.fontSize = "18px";
-    });
-
+    // Calculate movable cells
     const canMove = myPlayerId !== null && attackerId !== null && myPlayerId === attackerId && !gameOver;
+    const movableCells: Array<{x: number, y: number}> = [];
     
-    // Check if can move in each direction
-    const canMoveUp = canMove && myPosition !== null && myPosition.y > 0 && 
-      inferenceWallMarks[`${myPosition.x},${myPosition.y - 1},down`] !== "blocked";
-    const canMoveDown = canMove && myPosition !== null && myPosition.y < opponentMaze.height - 1 && 
-      inferenceWallMarks[`${myPosition.x},${myPosition.y},down`] !== "blocked";
-    const canMoveLeft = canMove && myPosition !== null && myPosition.x > 0 && 
-      inferenceWallMarks[`${myPosition.x - 1},${myPosition.y},right`] !== "blocked";
-    const canMoveRight = canMove && myPosition !== null && myPosition.x < opponentMaze.width - 1 && 
-      inferenceWallMarks[`${myPosition.x},${myPosition.y},right`] !== "blocked";
-
-    upBtn.disabled = !canMoveUp;
-    upBtn.style.opacity = canMoveUp ? "1" : "0.5";
-    downBtn.disabled = !canMoveDown;
-    downBtn.style.opacity = canMoveDown ? "1" : "0.5";
-    leftBtn.disabled = !canMoveLeft;
-    leftBtn.style.opacity = canMoveLeft ? "1" : "0.5";
-    rightBtn.disabled = !canMoveRight;
-    rightBtn.style.opacity = canMoveRight ? "1" : "0.5";
+    if (canMove && myPosition !== null) {
+      // Check up
+      if (myPosition.y > 0 && inferenceWallMarks[`${myPosition.x},${myPosition.y - 1},down`] !== "blocked") {
+        movableCells.push({x: myPosition.x, y: myPosition.y - 1});
+      }
+      // Check down
+      if (myPosition.y < opponentMaze.height - 1 && inferenceWallMarks[`${myPosition.x},${myPosition.y},down`] !== "blocked") {
+        movableCells.push({x: myPosition.x, y: myPosition.y + 1});
+      }
+      // Check left
+      if (myPosition.x > 0 && inferenceWallMarks[`${myPosition.x - 1},${myPosition.y},right`] !== "blocked") {
+        movableCells.push({x: myPosition.x - 1, y: myPosition.y});
+      }
+      // Check right
+      if (myPosition.x < opponentMaze.width - 1 && inferenceWallMarks[`${myPosition.x},${myPosition.y},right`] !== "blocked") {
+        movableCells.push({x: myPosition.x + 1, y: myPosition.y});
+      }
+    }
 
     const ws = getWS();
-    const sendMove = (direction: "up" | "down" | "left" | "right") => {
+    const onCellClick = (x: number, y: number) => {
       if (!ws || ws.readyState !== WebSocket.OPEN) return;
-      if (!canMove) return;
-      const msg: ClientMessage = { type: "MOVE", direction };
-      ws.send(JSON.stringify(msg));
+      if (!canMove || !myPosition) return;
+      
+      // Determine direction from current position to target
+      let direction: "up" | "down" | "left" | "right" | null = null;
+      if (x === myPosition.x && y === myPosition.y - 1) direction = "up";
+      else if (x === myPosition.x && y === myPosition.y + 1) direction = "down";
+      else if (x === myPosition.x - 1 && y === myPosition.y) direction = "left";
+      else if (x === myPosition.x + 1 && y === myPosition.y) direction = "right";
+      
+      if (direction) {
+        const msg: ClientMessage = { type: "MOVE", direction };
+        ws.send(JSON.stringify(msg));
+      }
     };
-
-    upBtn.onclick = () => sendMove("up");
-    downBtn.onclick = () => sendMove("down");
-    leftBtn.onclick = () => sendMove("left");
-    rightBtn.onclick = () => sendMove("right");
-
-    controlPanel.appendChild(upBtn);
-    controlPanel.appendChild(downBtn);
-    controlPanel.appendChild(leftBtn);
-    controlPanel.appendChild(rightBtn);
-    root.appendChild(controlPanel);
 
     // Maze display containers
     const mazesContainer = document.createElement("div");
@@ -186,6 +165,8 @@ export function renderMatch(root: HTMLElement) {
       isOwnMaze: false,
       showAnswer: gameOver,
       answerMaze: answerMaze,
+      movableCells: movableCells,
+      onCellClick: onCellClick,
     });
     mazesContainer.appendChild(opponentMazeContainer);
 
