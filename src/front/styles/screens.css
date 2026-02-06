@@ -1,5 +1,35 @@
 /* Screen-specific styles */
 
+/* Title Screen */
+.title-screen {
+  padding: 8px 0;
+}
+
+.title-subtitle {
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.title-actions {
+  margin-top: 18px;
+}
+
+.title-actions button {
+  min-width: 160px;
+  font-weight: 400;
+}
+
+.title-actions .primary {
+  background-color: #1f6feb;
+  border-color: #1f6feb;
+  color: #fff;
+}
+
+.title-actions .primary:hover:not(:disabled) {
+  background-color: #1a5fd0;
+  border-color: #1a5fd0;
+}
+
 /* Buttons Panel */
 .button-panel {
   display: flex;

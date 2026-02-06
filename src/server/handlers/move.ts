@@ -22,18 +22,17 @@ export function onMove(player: Player, direction: Direction) {
   const blocked = hasWall(opponent.maze, currentPos.x, currentPos.y, direction);
   const success = !blocked;
 
-  room.movedThisTurn.add(player.id);
-
   if (success) {
     room.positions[player.id] = nextPos;
-  }
-
-  // Change attacker regardless of success or failure
-  room.attackerId = opponent.id;
-
-  if (room.movedThisTurn.has(room.attackerId)) {
-    room.turnNumber += 1;
-    room.movedThisTurn = new Set<number>([room.attackerId]);
+    room.failedThisTurn.delete(player.id);
+  } else {
+    room.failedThisTurn.add(player.id);
+    room.attackerId = opponent.id;
+    
+    if (room.failedThisTurn.size === 2) {
+      room.turnNumber += 1;
+      room.failedThisTurn.clear();
+    }
   }
 
   const payload = {

@@ -2,6 +2,7 @@ import { navigate } from "../router.js";
 import { setSelectedMazeId } from "../state.js";
 import type { Maze } from "../../shared/types.js";
 import { loadMazesFromLocalStorage } from "../utils/storage.js";
+import { showSimpleConfirmDialog } from "../components/confirmDialog.js";
 
 export function renderMazeSelect(root: HTMLElement) {
   // clean
@@ -76,20 +77,12 @@ function showMazeList(root: HTMLElement) {
   nameHeader.style.textAlign = "left";
   header.appendChild(nameHeader);
 
-  // wall count
-  const wallHeader = document.createElement("th");
-  wallHeader.textContent = "壁の数";
-  wallHeader.style.padding = "10px";
-  wallHeader.style.textAlign = "left";
-  wallHeader.style.width = "80px";
-  header.appendChild(wallHeader);
-
   // start position
   const startHeader = document.createElement("th");
   startHeader.textContent = "スタート";
   startHeader.style.padding = "10px";
   startHeader.style.textAlign = "left";
-  startHeader.style.width = "80px";
+  startHeader.style.width = "90px";
   header.appendChild(startHeader);
 
   // goal position
@@ -97,7 +90,7 @@ function showMazeList(root: HTMLElement) {
   goalHeader.textContent = "ゴール";
   goalHeader.style.padding = "10px";
   goalHeader.style.textAlign = "left";
-  goalHeader.style.width = "80px";
+  goalHeader.style.width = "90px";
   header.appendChild(goalHeader);
 
   // created date
@@ -142,12 +135,6 @@ function showMazeList(root: HTMLElement) {
       navigate("mazeMake");
     };
     row.appendChild(nameCell);
-
-    // wall count
-    const wallCell = document.createElement("td");
-    wallCell.textContent = String(maze.wallCount);
-    wallCell.style.padding = "10px";
-    row.appendChild(wallCell);
 
     // start position
     const startCell = document.createElement("td");
@@ -199,11 +186,11 @@ function showMazeList(root: HTMLElement) {
     deleteBtn.textContent = "削除";
     deleteBtn.style.color = "#f00";
     deleteBtn.onclick = () => {
-      if (confirm(`迷路「${maze.name}」を削除してもよろしいですか？`)) {
+      showSimpleConfirmDialog(`迷路「${maze.name}」を削除してもよろしいですか？`, () => {
         deleteMaze(maze.id);
         root.innerHTML = "";
         renderMazeSelect(root);
-      }
+      });
     };
     actionCell.appendChild(deleteBtn);
 

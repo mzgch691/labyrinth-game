@@ -3,7 +3,7 @@ import { getSelectedMazeId, setSelectedMazeId } from "../state.js";
 import type { Maze, Cell } from "../../shared/types.js";
 import { isGoalReachable } from "../utils/maze.js";
 import { saveMazeToLocalStorage, loadMazesFromLocalStorage, updateMazeInLocalStorage } from "../utils/storage.js";
-import { showConfirmDialog } from "../components/confirmDialog.js";
+import { showConfirmDialog, showAlertDialog, showSimpleConfirmDialog } from "../components/confirmDialog.js";
 
 const MAZE_SIZE = 6;
 const MAX_WALLS = 20;
@@ -344,12 +344,12 @@ export function renderMazeMake(root: HTMLElement) {
         onSave: () => {
           const name = nameInput.value.trim();
           if (!name) {
-            alert("迷路の名前を入力してください");
+            showAlertDialog("迷路の名前を入力してください");
             return false;
           }
 
           if (!isGoalReachable(cells, start, goal)) {
-            alert("ゴールに到達不可能な迷路です。壁の配置を確認してください。");
+            showAlertDialog("ゴールに到達不可能な迷路です。壁の配置を確認してください。");
             return false;
           }
 
@@ -409,12 +409,12 @@ export function renderMazeMake(root: HTMLElement) {
   newSaveBtn.onclick = () => {
     const name = nameInput.value.trim();
     if (!name) {
-      alert("迷路の名前を入力してください");
+      showAlertDialog("迷路の名前を入力してください");
       return;
     }
 
     if (!isGoalReachable(cells, start, goal)) {
-      alert("ゴールに到達不可能な迷路です。壁の配置を確認してください。");
+      showAlertDialog("ゴールに到達不可能な迷路です。壁の配置を確認してください。");
       return;
     }
 
@@ -432,7 +432,7 @@ export function renderMazeMake(root: HTMLElement) {
       updatedAt: Date.now(),
     };
     saveMazeToLocalStorage(maze);
-    alert(`迷路「${name}」を保存しました！`);
+    showAlertDialog(`迷路「${name}」を保存しました！`);
     
     currentMazeId = newMazeId;
     isSaved = true;
@@ -450,20 +450,20 @@ export function renderMazeMake(root: HTMLElement) {
   overwriteSaveBtn.style.opacity = currentMazeId ? "1" : "0.5";
   overwriteSaveBtn.onclick = () => {
     if (!currentMazeId) {
-      alert("編集中の迷路がありません");
+      showAlertDialog("編集中の迷路がありません");
       return;
     }
 
     // chack name
     const name = nameInput.value.trim();
     if (!name) {
-      alert("迷路の名前を入力してください");
+      showAlertDialog("迷路の名前を入力してください");
       return;
     }
 
     // check goal reachable
     if (!isGoalReachable(cells, start, goal)) {
-      alert("ゴールに到達不可能な迷路です。壁の配置を確認してください。");
+      showAlertDialog("ゴールに到達不可能な迷路です。壁の配置を確認してください。");
       return;
     }
 
@@ -483,7 +483,7 @@ export function renderMazeMake(root: HTMLElement) {
         updatedAt: Date.now(),
       };
       localStorage.setItem("labyrinths", JSON.stringify(mazes));
-      alert(`迷路「${name}」を保存しました！`);
+      showAlertDialog(`迷路「${name}」を保存しました！`);
       isSaved = true;
     }
   };
@@ -494,14 +494,14 @@ export function renderMazeMake(root: HTMLElement) {
   clearBtn.textContent = "クリア";
   clearBtn.style.marginRight = "10px";
   clearBtn.onclick = () => {
-    if (confirm("迷路をクリアしてもよろしいですか？")) {
+    showSimpleConfirmDialog("迷路をクリアしてもよろしいですか？", () => {
       cells.forEach((cell) => {
         cell.walls = { up: false, down: false, left: false, right: false };
       });
       wallCount = 0;
       isSaved = false;
       render();
-    }
+    });
   };
   buttonPanel.appendChild(clearBtn);
 }

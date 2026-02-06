@@ -139,10 +139,17 @@ export function renderMazeDisplay(
             element.style.backgroundColor = hasWall ? "#000" : "#ddd";
           }
         } else if (showAnswer && answerMaze) {
-          // After game end: display correct answer
-          const cell = answerMaze.cells.find((c) => c.x === cellX && c.y === cellY);
-          const hasWall = cell?.walls.right ?? false;
-          element.style.backgroundColor = hasWall ? "#000" : "#ddd";
+          // After game end: merge discovered info with answer
+          if (mark === "open") {
+            element.style.backgroundColor = "#fff";
+          } else if (mark === "blocked") {
+            element.style.backgroundColor = blockedColor;
+          } else {
+            // Unknown: use answer
+            const cell = answerMaze.cells.find((c) => c.x === cellX && c.y === cellY);
+            const hasWall = cell?.walls.right ?? false;
+            element.style.backgroundColor = hasWall ? "#000" : "#ddd";
+          }
         } else {
           // Inferring maze: marks only
           if (mark === "open") {
@@ -173,10 +180,17 @@ export function renderMazeDisplay(
             element.style.backgroundColor = hasWall ? "#000" : "#ddd";
           }
         } else if (showAnswer && answerMaze) {
-          // After game end: display correct answer
-          const cell = answerMaze.cells.find((c) => c.x === cellX && c.y === cellY);
-          const hasWall = cell?.walls.down ?? false;
-          element.style.backgroundColor = hasWall ? "#000" : "#ddd";
+          // After game end: merge discovered info with answer
+          if (mark === "open") {
+            element.style.backgroundColor = "#fff";
+          } else if (mark === "blocked") {
+            element.style.backgroundColor = blockedColor;
+          } else {
+            // Unknown: use answer
+            const cell = answerMaze.cells.find((c) => c.x === cellX && c.y === cellY);
+            const hasWall = cell?.walls.down ?? false;
+            element.style.backgroundColor = hasWall ? "#000" : "#ddd";
+          }
         } else {
           // Inferring maze: marks only
           if (mark === "open") {

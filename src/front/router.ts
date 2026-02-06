@@ -20,21 +20,24 @@ export function getCurrentScreen(): Screen {
 
 function render() {
   app.innerHTML = "";
+  const shell = document.createElement("div");
+  shell.className = "screen-shell";
+  app.appendChild(shell);
   switch (currentScreen) {
     case "title":
-      renderTitle(app);
+      renderTitle(shell);
       break;
     case "lobby":
-      renderLobby(app);
+      renderLobby(shell);
       break;
     case "match":
-      renderMatch(app);
+      renderMatch(shell);
       break;
     case "mazeSelect":
-      renderMazeSelect(app);
+      renderMazeSelect(shell);
       break;
     case "mazeMake":
-      renderMazeMake(app);
+      renderMazeMake(shell);
       break;
   }
 }

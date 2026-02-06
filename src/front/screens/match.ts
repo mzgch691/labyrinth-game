@@ -1,6 +1,7 @@
 import type { ClientMessage, Maze } from "../../shared/types.js";
 import { navigate } from "../router.js";
 import { getWS } from "../connection.js";
+import { showAlertDialog } from "../components/confirmDialog.js";
 import {
   getRoomId,
   resetClientState,
@@ -202,12 +203,12 @@ export function renderMatch(root: HTMLElement) {
     setTimeout(() => {
       if (myPlayerId === winnerId) {
         if (gameOverReason === "disconnect") {
-          alert("相手が脱落しました。あなたの勝ちです！");
+          showAlertDialog("相手が脱落しました。あなたの勝ちです！");
         } else {
-          alert("あなたの勝ちです！");
+          showAlertDialog("あなたの勝ちです！");
         }
       } else {
-        alert("あなたの負けです。");
+        showAlertDialog("あなたの負けです。");
       }
     }, 50);
   }

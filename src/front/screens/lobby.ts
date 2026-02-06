@@ -34,20 +34,38 @@ export function renderLobby(root: HTMLElement) {
 
   // Ready/Unready button
   const readyBtn = document.createElement("button");
-  readyBtn.style.marginLeft = "10px";
+  readyBtn.style.marginRight = "10px";
+
+  // Status display
+  const statusText = document.createElement("span");
+  statusText.style.fontSize = "14px";
+  statusText.style.color = "#666";
 
   const updateReadyButton = () => {
     const hasMaze = getSelectedMazeForPlay() !== null;
     const isReady = getReady();
     
-    if (!hasMaze && !isReady) {
-      readyBtn.textContent = "Ready (迷路を選択してください)";
+    if (!hasMaze) {
+      readyBtn.textContent = "準備完了";
       readyBtn.disabled = true;
       readyBtn.style.opacity = "0.5";
-    } else {
-      readyBtn.textContent = isReady ? "Unready" : "Ready";
+      statusText.textContent = "現在の状態：準備解除";
+      statusText.style.color = "#666";
+      statusText.style.fontWeight = "normal";
+    } else if (isReady) {
+      readyBtn.textContent = "準備解除";
       readyBtn.disabled = false;
       readyBtn.style.opacity = "1";
+      statusText.textContent = "現在の状態：準備完了";
+      statusText.style.color = "#0070f3";
+      statusText.style.fontWeight = "bold";
+    } else {
+      readyBtn.textContent = "準備完了";
+      readyBtn.disabled = false;
+      readyBtn.style.opacity = "1";
+      statusText.textContent = "現在の状態：準備解除";
+      statusText.style.color = "#666";
+      statusText.style.fontWeight = "normal";
     }
   };
 
@@ -78,6 +96,7 @@ export function renderLobby(root: HTMLElement) {
     updateReadyButton();
   };
   buttonPanel.appendChild(readyBtn);
+  buttonPanel.appendChild(statusText);
 
   updateReadyButton();
   root.appendChild(buttonPanel);

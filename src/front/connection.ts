@@ -18,6 +18,7 @@ import {
   setWinnerId,
   setGameOverReason,
   setAnswerMaze,
+  getGameOver,
 } from "./state.js";
 let ws: WebSocket | null = null;
 
@@ -78,6 +79,11 @@ export function initConnection() {
       break;
     }
     case "GAME_OVER": {
+      // ゲームオーバーが既に発生している場合は無視（勝利判定後の相手切断を防ぐ）
+      if (getGameOver()) {
+        break;
+      }
+
       const myId = getMyPlayerId();
       setGameOver(true);
       setWinnerId(msg.winnerId);

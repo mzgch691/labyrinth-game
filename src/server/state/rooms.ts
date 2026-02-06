@@ -6,7 +6,7 @@ export type RoomState = {
   positions: Record<number, { x: number; y: number }>;
   attackerId: number;
   turnNumber: number;
-  movedThisTurn: Set<number>;
+  failedThisTurn: Set<number>;
 };
 
 const rooms = new Map<number, RoomState>();
@@ -25,7 +25,7 @@ export function createRoomState(roomId: number, players: [Player, Player]) {
     positions,
     attackerId: p1.id,
     turnNumber: 1,
-    movedThisTurn: new Set<number>(),
+    failedThisTurn: new Set<number>(),
   };
 
   rooms.set(roomId, room);
