@@ -32,21 +32,21 @@ function showMazeList(root: HTMLElement) {
     return `${column}${row}`;
   };
 
+  // button to navigate to title
+  const backBtn = document.createElement("button");
+  backBtn.textContent = "タイトルに戻る";
+  backBtn.style.marginRight = "10px";
+  backBtn.onclick = () => navigate("title");
+  listContainer.appendChild(backBtn);
+
   // botton to navigate to mazeMake
   const newBtn = document.createElement("button");
   newBtn.textContent = "新しい迷路を作成";
-  newBtn.style.marginRight = "10px";
   newBtn.onclick = () => {
     setSelectedMazeId(null);
     navigate("mazeMake");
   };
   listContainer.appendChild(newBtn);
-
-  // button to navigate to title
-  const backBtn = document.createElement("button");
-  backBtn.textContent = "タイトルに戻る";
-  backBtn.onclick = () => navigate("title");
-  listContainer.appendChild(backBtn);
 
   root.appendChild(listContainer);
 

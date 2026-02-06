@@ -16,15 +16,19 @@ import {
   getMyPlayerId,
   setGameOver,
   setWinnerId,
+  setGameOverReason,
   setAnswerMaze,
 } from "./state.js";
 let ws: WebSocket | null = null;
 
 export function initConnection() {
   if (!ws) {
-    const storedWsUrl = localStorage.getItem("WS_URL");
-    const globalWsUrl = (window as any).__WS_URL__ as string | undefined;
-    const wsUrl = storedWsUrl || globalWsUrl || "ws://localhost:8080";
+    const isLocalHost =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+    const wsUrl = isLocalHost
+      ? "ws://localhost:8080"
+      : "wss://labyrinth-game-41hs.onrender.com";
     ws = new WebSocket(wsUrl);
   }
 
@@ -77,11 +81,10 @@ export function initConnection() {
       const myId = getMyPlayerId();
       setGameOver(true);
       setWinnerId(msg.winnerId);
+      setGameOverReason(msg.reason ?? "goal");
       setAnswerMaze(msg.opponentMaze);
-      
-      if (getCurrentScreen() === "match") {
-        navigate("match");
-      }
+
+      navigate("match");
       break;
     }
     }

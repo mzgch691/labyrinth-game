@@ -67,6 +67,19 @@ export function leaveRoom(player: Player, roomId: number) {
 
   const room = getRoomState(roomId);
   if (room) {
+    const opponent = room.players.find((p) => p.id !== player.id) || null;
+    if (opponent && player.maze) {
+      opponent.socket.send(
+        JSON.stringify({
+          type: "GAME_OVER",
+          winnerId: opponent.id,
+          opponentMaze: player.maze,
+          reason: "disconnect",
+        })
+      );
+      opponent.roomId = null;
+      opponent.ready = false;
+    }
     removeRoomState(roomId);
   }
 }

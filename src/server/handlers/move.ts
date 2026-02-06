@@ -58,6 +58,7 @@ export function onMove(player: Player, direction: Direction) {
       type: "GAME_OVER",
       winnerId: player.id,
       opponentMaze: opponent.maze,
+      reason: "goal",
     };
     room.players.forEach((p) => {
       p.socket.send(JSON.stringify(gameOverPayload));

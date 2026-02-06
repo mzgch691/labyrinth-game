@@ -12,6 +12,7 @@ export let inferenceWallMarks: Record<string, "open" | "blocked"> = {};
 export let myMazeWallMarks: Record<string, "open" | "blocked"> = {};
 export let gameOver: boolean = false;
 export let winnerId: number | null = null;
+export let gameOverReason: "goal" | "disconnect" | null = null;
 export let answerMaze: Maze | null = null;
 
 export function getMyMaze(): Maze | null {
@@ -107,6 +108,14 @@ export function setWinnerId(id: number | null): void {
   winnerId = id;
 }
 
+export function getGameOverReason(): "goal" | "disconnect" | null {
+  return gameOverReason;
+}
+
+export function setGameOverReason(reason: "goal" | "disconnect" | null): void {
+  gameOverReason = reason;
+}
+
 export function getAnswerMaze(): Maze | null {
   return answerMaze;
 }
@@ -140,5 +149,6 @@ export function resetMatchState(): void {
   myMazeWallMarks = {};
   gameOver = false;
   winnerId = null;
+  gameOverReason = null;
   answerMaze = null;
 }

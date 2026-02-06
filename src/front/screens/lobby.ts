@@ -13,6 +13,25 @@ export function renderLobby(root: HTMLElement) {
 
   const mazes = loadMazesFromLocalStorage();
 
+  // Button panel
+  const buttonPanel = document.createElement("div");
+  buttonPanel.style.marginBottom = "20px";
+
+  // Back button
+  const backBtn = document.createElement("button");
+  backBtn.textContent = "タイトルに戻る";
+  backBtn.style.marginRight = "10px";
+  backBtn.onclick = () => {
+    const ws = getWS();
+    if (ws && ws.readyState === WebSocket.OPEN && getReady()) {
+      ws.send(JSON.stringify({ type: "UNREADY" }));
+    }
+    setReady(false);
+    setSelectedMazeForPlay(null);
+    navigate("title");
+  };
+  buttonPanel.appendChild(backBtn);
+
   // Ready/Unready button
   const readyBtn = document.createElement("button");
   readyBtn.style.marginLeft = "10px";
@@ -58,6 +77,10 @@ export function renderLobby(root: HTMLElement) {
 
     updateReadyButton();
   };
+  buttonPanel.appendChild(readyBtn);
+
+  updateReadyButton();
+  root.appendChild(buttonPanel);
 
   // Maze selection section
   const mazeSection = document.createElement("div");
@@ -145,24 +168,6 @@ export function renderLobby(root: HTMLElement) {
   }
 
   root.appendChild(mazeSection);
-
-  // Back button
-  const backBtn = document.createElement("button");
-  backBtn.textContent = "タイトルに戻る";
-  backBtn.style.marginRight = "10px";
-  backBtn.onclick = () => {
-    const ws = getWS();
-    if (ws && ws.readyState === WebSocket.OPEN && getReady()) {
-      ws.send(JSON.stringify({ type: "UNREADY" }));
-    }
-    setReady(false);
-    setSelectedMazeForPlay(null);
-    navigate("title");
-  };
-  root.appendChild(backBtn);
-
-  updateReadyButton();
-  root.appendChild(readyBtn);
 }
 
 // Render maze preview

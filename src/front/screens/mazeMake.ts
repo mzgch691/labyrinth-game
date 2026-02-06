@@ -57,6 +57,10 @@ export function renderMazeMake(root: HTMLElement) {
   let currentMazeId = mazeId;
   let isSaved = true;
 
+  // Button panel (placed at top, below title)
+  const buttonPanel = document.createElement("div");
+  buttonPanel.style.marginBottom = "20px";
+
   // control panel
   const controlPanel = document.createElement("div");
   controlPanel.style.marginBottom = "20px";
@@ -84,9 +88,10 @@ export function renderMazeMake(root: HTMLElement) {
   hintLabel.style.marginTop = "5px";
   hintLabel.style.fontSize = "12px";
   hintLabel.style.color = "#666";
-  hintLabel.textContent = "セル間の線をクリックして壁をトグル / S・Fはドラッグで移動";
+  hintLabel.textContent = "セル間の線をクリックして壁をトグル / S・Gはドラッグで移動";
   controlPanel.appendChild(hintLabel);
 
+  root.appendChild(buttonPanel);
   root.appendChild(controlPanel);
 
   // maze grid
@@ -328,8 +333,74 @@ export function renderMazeMake(root: HTMLElement) {
   render();
 
   // Save and action buttons
-  const buttonPanel = document.createElement("div");
-  buttonPanel.style.marginTop = "20px";
+  // Back button
+  const backBtn = document.createElement("button");
+  backBtn.textContent = "一覧に戻る";
+  backBtn.style.marginRight = "10px";
+  backBtn.onclick = () => {
+    if (!isSaved) {
+      showConfirmDialog({
+        message: "迷路を保存して戻りますか？",
+        onSave: () => {
+          const name = nameInput.value.trim();
+          if (!name) {
+            alert("迷路の名前を入力してください");
+            return false;
+          }
+
+          if (!isGoalReachable(cells, start, goal)) {
+            alert("ゴールに到達不可能な迷路です。壁の配置を確認してください。");
+            return false;
+          }
+
+          if (currentMazeId) {
+            const updatedMaze: Maze = {
+              id: currentMazeId,
+              name,
+              width: MAZE_SIZE,
+              height: MAZE_SIZE,
+              cells: JSON.parse(JSON.stringify(cells)),
+              start,
+              goal,
+              wallCount,
+              createdAt: (mazes.find((m) => m.id === currentMazeId))?.createdAt || Date.now(),
+              updatedAt: Date.now(),
+            };
+          } else {
+            const newMazeId = `maze_${Date.now()}`;
+            const maze: Maze = {
+              id: newMazeId,
+              name,
+              width: MAZE_SIZE,
+              height: MAZE_SIZE,
+              cells: JSON.parse(JSON.stringify(cells)),
+              start,
+              goal,
+              wallCount,
+              createdAt: Date.now(),
+              updatedAt: Date.now(),
+            };
+            saveMazeToLocalStorage(maze);
+          }
+
+          setSelectedMazeId(null);
+          navigate("mazeSelect");
+          return true;
+        },
+        onDiscard: () => {
+          setSelectedMazeId(null);
+          navigate("mazeSelect");
+        },
+        onCancel: () => {
+        },
+        root,
+      });
+    } else {
+      setSelectedMazeId(null);
+      navigate("mazeSelect");
+    }
+  };
+  buttonPanel.appendChild(backBtn);
 
   // Save as new
   const newSaveBtn = document.createElement("button");
@@ -433,75 +504,4 @@ export function renderMazeMake(root: HTMLElement) {
     }
   };
   buttonPanel.appendChild(clearBtn);
-
-  // Back button
-  const backBtn = document.createElement("button");
-  backBtn.textContent = "一覧に戻る";
-  backBtn.onclick = () => {
-    if (!isSaved) {
-      showConfirmDialog({
-        message: "迷路を保存して戻りますか？",
-        onSave: () => {
-          const name = nameInput.value.trim();
-          if (!name) {
-            alert("迷路の名前を入力してください");
-            return false;
-          }
-
-          if (!isGoalReachable(cells, start, goal)) {
-            alert("ゴールに到達不可能な迷路です。壁の配置を確認してください。");
-            return false;
-          }
-
-          if (currentMazeId) {
-            const updatedMaze: Maze = {
-              id: currentMazeId,
-              name,
-              width: MAZE_SIZE,
-              height: MAZE_SIZE,
-              cells: JSON.parse(JSON.stringify(cells)),
-              start,
-              goal,
-              wallCount,
-              createdAt: (mazes.find((m) => m.id === currentMazeId))?.createdAt || Date.now(),
-              updatedAt: Date.now(),
-            };
-            updateMazeInLocalStorage(currentMazeId, updatedMaze);
-          } else {
-            const newMazeId = `maze_${Date.now()}`;
-            const maze: Maze = {
-              id: newMazeId,
-              name,
-              width: MAZE_SIZE,
-              height: MAZE_SIZE,
-              cells: JSON.parse(JSON.stringify(cells)),
-              start,
-              goal,
-              wallCount,
-              createdAt: Date.now(),
-              updatedAt: Date.now(),
-            };
-            saveMazeToLocalStorage(maze);
-          }
-
-          setSelectedMazeId(null);
-          navigate("mazeSelect");
-          return true;
-        },
-        onDiscard: () => {
-          setSelectedMazeId(null);
-          navigate("mazeSelect");
-        },
-        onCancel: () => {
-        },
-        root,
-      });
-    } else {
-      setSelectedMazeId(null);
-      navigate("mazeSelect");
-    }
-  };
-  buttonPanel.appendChild(backBtn);
-
-  root.appendChild(buttonPanel);
 }

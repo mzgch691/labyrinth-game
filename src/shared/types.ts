@@ -94,4 +94,5 @@ export type ServerMessage =
       type: "GAME_OVER";
       winnerId: number;
       opponentMaze: Maze;
+      reason?: "goal" | "disconnect";
     };

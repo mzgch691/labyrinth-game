@@ -15,6 +15,7 @@ import {
   getMyMazeWallMarks,
   getGameOver,
   getWinnerId,
+  getGameOverReason,
   getAnswerMaze,
 } from "../state.js";
 import { renderMazeDisplay } from "../components/mazeGrid.js";
@@ -28,6 +29,28 @@ export function renderMatch(root: HTMLElement) {
   titleText.textContent = "対戦画面";
   root.appendChild(titleText);
 
+  // Button panel
+  const buttonPanel = document.createElement("div");
+  buttonPanel.style.marginBottom = "20px";
+
+  // Back to title
+  const backBtn = document.createElement("button");
+  backBtn.textContent = "タイトルに戻る";
+  backBtn.onclick = () => {
+    const ws = getWS();
+    const roomId = getRoomId();
+
+    if (ws && ws.readyState === WebSocket.OPEN && roomId !== null) {
+      const msg: ClientMessage = { type: "LEAVE_MATCH", roomId };
+      ws.send(JSON.stringify(msg));
+    }
+
+    resetClientState();
+    navigate("title");
+  };
+  buttonPanel.appendChild(backBtn);
+  root.appendChild(buttonPanel);
+
   const myMaze = getMyMaze();
   const opponentMaze = getOpponentMaze();
   const myPlayerId = getMyPlayerId();
@@ -39,6 +62,7 @@ export function renderMatch(root: HTMLElement) {
   const myMazeWallMarks = getMyMazeWallMarks();
   const gameOver = getGameOver();
   const winnerId = getWinnerId();
+  const gameOverReason = getGameOverReason();
   const answerMaze = getAnswerMaze();
 
   if (!myMaze || !opponentMaze) {
@@ -60,7 +84,7 @@ export function renderMatch(root: HTMLElement) {
     const turnState = document.createElement("div");
     if (gameOver) {
       if (myPlayerId === winnerId) {
-        turnState.textContent = "あなたの勝ち！";
+        turnState.textContent = gameOverReason === "disconnect" ? "相手が脱落しました" : "あなたの勝ち！";
         turnState.style.color = "#0070f3";
         turnState.style.fontWeight = "bold";
       } else {
@@ -173,28 +197,15 @@ export function renderMatch(root: HTMLElement) {
     root.appendChild(mazesContainer);
   }
 
-  // Back to title
-  const backBtn = document.createElement("button");
-  backBtn.textContent = "タイトルに戻る";
-  backBtn.onclick = () => {
-    const ws = getWS();
-    const roomId = getRoomId();
-
-    if (ws && ws.readyState === WebSocket.OPEN && roomId !== null) {
-      const msg: ClientMessage = { type: "LEAVE_MATCH", roomId };
-      ws.send(JSON.stringify(msg));
-    }
-
-    resetClientState();
-    navigate("title");
-  };
-  root.appendChild(backBtn);
-
   // Show game over alert
   if (gameOver && winnerId !== null && myPlayerId !== null) {
     setTimeout(() => {
       if (myPlayerId === winnerId) {
-        alert("あなたの勝ちです！");
+        if (gameOverReason === "disconnect") {
+          alert("相手が脱落しました。あなたの勝ちです！");
+        } else {
+          alert("あなたの勝ちです！");
+        }
       } else {
         alert("あなたの負けです。");
       }

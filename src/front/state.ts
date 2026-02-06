@@ -32,6 +32,8 @@ export {
   setGameOver,
   getWinnerId,
   setWinnerId,
+  getGameOverReason,
+  setGameOverReason,
   getAnswerMaze,
   setAnswerMaze,
   getWallKey,
