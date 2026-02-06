@@ -213,22 +213,4 @@ export function renderMazeDisplay(
   }
 
   container.appendChild(gridContainer);
-
-  // Maze info
-  const info = document.createElement("div");
-  info.style.marginTop = "10px";
-  info.style.fontSize = "12px";
-  info.style.color = "#666";
-  const formatCoordinate = (x: number, y: number): string => {
-    const column = String.fromCharCode(65 + x);
-    const row = y + 1;
-    return `${column}${row}`;
-  };
-  info.innerHTML = `
-    ${maze.name}<br>
-    スタート: ${formatCoordinate(maze.start.x, maze.start.y)} | 
-    ゴール: ${formatCoordinate(maze.goal.x, maze.goal.y)} | 
-    壁の数: ${maze.wallCount}
-  `;
-  container.appendChild(info);
 }
