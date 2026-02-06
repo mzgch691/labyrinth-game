@@ -11,7 +11,7 @@ export function renderTitle(root: HTMLElement) {
 
   // setting title
   const titleText = document.createElement("h1");
-  titleText.textContent = "迷路ゲーム";
+  titleText.textContent = "ラビリンス 紙と鉛筆でできる迷路ゲーム オンライン対戦";
   wrapper.appendChild(titleText);
 
   const subtitle = document.createElement("p");
